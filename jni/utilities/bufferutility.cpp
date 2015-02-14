@@ -20,7 +20,10 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#include "bufferutility.h"
+#include <utilities/bufferutility.h>
+#include <sstream>
+#include <fstream>
+#include <iostream>
 
 /* public methods */
 
@@ -130,16 +133,6 @@ int BufferUtility::getSamplesPerBar( int sampleRate, double tempo, int beatAmoun
     return samplesPerDoubleFourTime / beatUnit * beatAmount;
 }
 
-SAMPLE_TYPE* BufferUtility::generateSilentBuffer( int aBufferSize )
-{
-    SAMPLE_TYPE* out = new SAMPLE_TYPE[ aBufferSize ];
-
-    for ( int i = 0; i < aBufferSize; ++i )
-        out[ i ] = 0.0;
-
-    return out;
-}
-
 /**
  * calculate the amount of samples a single cycle of a waveform
  * will hold at a give rate in Hz, at the current sample rate
@@ -159,4 +152,39 @@ int BufferUtility::calculateBufferLength( SAMPLE_TYPE aMinRate )
 int BufferUtility::calculateBufferLength( int milliSeconds )
 {
     return milliSeconds * ( AudioEngineProps::SAMPLE_RATE / 1000 );
+}
+
+SAMPLE_TYPE* BufferUtility::generateSilentBuffer( int aBufferSize )
+{
+    SAMPLE_TYPE* out = new SAMPLE_TYPE[ aBufferSize ];
+
+    for ( int i = 0; i < aBufferSize; ++i )
+        out[ i ] = 0.0;
+
+    return out;
+}
+
+/**
+ * write the contents of a buffer
+ * into a file onto the file system
+ */
+void BufferUtility::bufferToFile( const char* aFileName, SAMPLE_TYPE* aBuffer, int aBufferSize )
+{
+    std::ofstream myFile;
+
+    myFile.open( aFileName );
+    myFile << "{ ";
+
+    for ( int i = 0; i < aBufferSize; ++i )
+    {
+        SAMPLE_TYPE tmp = aBuffer[ i ];
+        myFile << tmp;
+
+        if ( i < ( aBufferSize - 1 ))
+            myFile << ", ";
+    }
+    myFile << " } ";
+    myFile << std::endl;
+
+    myFile.close();
 }

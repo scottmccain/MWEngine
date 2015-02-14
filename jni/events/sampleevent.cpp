@@ -23,7 +23,7 @@
 #include "sampleevent.h"
 #include "../audioengine.h"
 #include "../sequencer.h"
-#include "../utils.h"
+#include "../utilities/utils.h"
 #include <instruments/sampledinstrument.h>
 
 /* constructor / destructor */
@@ -56,6 +56,11 @@ void SampleEvent::setBufferRangeStart( int value )
 
     if ( _rangePointer < _bufferRangeStart )
         _rangePointer = _bufferRangeStart;
+
+    if ( _bufferRangeEnd <= _bufferRangeStart )
+        _bufferRangeEnd = std::min( _bufferRangeStart + 1, _sampleLength );
+
+    _bufferRangeLength = _bufferRangeEnd - _bufferRangeStart;
 }
 
 int SampleEvent::getBufferRangeEnd()
@@ -69,16 +74,11 @@ void SampleEvent::setBufferRangeEnd( int value )
 
     if ( _rangePointer > _bufferRangeEnd )
         _rangePointer = _bufferRangeEnd;
-}
 
-int SampleEvent::getBufferRangeLength()
-{
-    return _bufferRangeLength;
-}
+    if ( _bufferRangeStart >= _bufferRangeEnd )
+        _bufferRangeStart = std::max( _bufferRangeEnd - 1, 0 );
 
-void SampleEvent::setBufferRangeLength( int value )
-{
-    _bufferRangeLength = value;
+    _bufferRangeLength = _bufferRangeEnd - _bufferRangeStart;
 }
 
 int SampleEvent::getReadPointer()
@@ -91,7 +91,7 @@ void SampleEvent::playNow()
     // loopeable samples play from their range start, whereas
     // non-loopeable samples are enqueued to the current sequencer position
 
-    if ( getLoopeable() )
+    if ( _loopeable )
         _rangePointer = _bufferRangeStart;
     else
         _sampleStart = AudioEngine::bufferPosition;
@@ -176,15 +176,28 @@ void SampleEvent::swapInstrument( BaseInstrument* aInstrument )
     {
         bool readdToSequencer = _addedToSequencer;
         removeFromSequencer();
-        
+
         _instrument = aInstrument;
-        
+
         // if event was added to the Sequencer, re-add it so
         // it can now playback over the new instrument
-        
+
         if ( readdToSequencer )
             addToSequencer();
     }
+}
+
+void SampleEvent::mixBuffer( AudioBuffer* outputBuffer, int bufferPos, int minBufferPosition, int maxBufferPosition,
+                             bool loopStarted, int loopOffset, bool useChannelRange )
+{
+    // if we have a range length that is unequal to the total sample duration, read from the range
+    // otherwise invoke the base mixBuffer method
+
+    if ( _loopeable || _bufferRangeLength != _sampleLength )
+        getBufferForRange( outputBuffer, bufferPos );
+    else
+        BaseAudioEvent::mixBuffer( outputBuffer, bufferPos, minBufferPosition, maxBufferPosition,
+                                   loopStarted, loopOffset, useChannelRange );
 }
 
 bool SampleEvent::getBufferForRange( AudioBuffer* buffer, int readPos )

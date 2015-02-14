@@ -32,7 +32,7 @@
 #define JAVA_BRIDGE_H
 
 #include <jni.h>
-#include "utils.h"
+#include <utilities/utils.h>
 
 /* this is the classpath to the Java class the MWEngine communicates with */
 
@@ -47,12 +47,10 @@ typedef struct {
 
 namespace JavaAPIs
 {
-    const javaAPI REGISTRATION_SUCCESS        = { "handleBridgeConnected",         "(I)V" };
-    const javaAPI TEMPO_UPDATED               = { "handleTempoUpdated",            "(FIIIII)V" };
-    const javaAPI SEQUENCER_STEP_UPDATE       = { "handleSequencerPositionUpdate", "(I)V" };
-    const javaAPI RECORDING_UPDATE            = { "handleRecordingUpdate",         "(I)V" };
-    const javaAPI BOUNCE_COMPLETED            = { "handleBounceComplete",          "(I)V" };
-    const javaAPI OPENSL_INITIALIZATION_ERROR = { "handleOpenSLError",             "()V"  };
+    const javaAPI REGISTRATION_SUCCESS     = { "handleBridgeConnected",         "(I)V"  };
+    const javaAPI HANDLE_NOTIFICATION      = { "handleNotification",            "(I)V"  };
+    const javaAPI HANDLE_NOTIFICATION_DATA = { "handleNotificationWithData",    "(II)V" };
+    const javaAPI TEMPO_UPDATED            = { "handleTempoUpdated",            "(FIIIII)V" };
 }
 
 namespace JavaBridge

@@ -46,16 +46,13 @@ namespace VolumeUtil
 
 /* convenience methods */
 
-// note this will not work on pointers (yes, that means arrays passed as arguments too ;-)
-#define ARRAY_SIZE( array ) ( sizeof(( array )) / sizeof(( array[ 0 ])))
-
 // numbers to string
 #define SSTR( x ) dynamic_cast< std::ostringstream & >( \
  ( std::ostringstream() << std::dec << x ) ).str()
 
 /* convenience log methods */
 
-#define APPNAME "MWENGINE"
+#define LOGTAG "MWENGINE"
 
 namespace DebugTool
 {

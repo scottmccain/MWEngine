@@ -23,9 +23,8 @@
 #ifndef __SEQUENCERAPI_H_INCLUDED__
 #define __SEQUENCERAPI_H_INCLUDED__
 
-#include "bulkcacher.h"
 #include "sequencer.h"
-#include "observer.h"
+#include <utilities/bulkcacher.h>
 
 /**
  * SequencerAPI is to be used as a bridge to
@@ -38,7 +37,8 @@ class SequencerAPI
         SequencerAPI();
         ~SequencerAPI();
         
-        void prepare             ( int aBufferSize, int aSampleRate, float aQueuedTempo, int aTimeSigBeatAmount, int aTimeSigBeatUnit );
+        void prepare             ( int aBufferSize, int aSampleRate, float aQueuedTempo,
+                                   int aTimeSigBeatAmount, int aTimeSigBeatUnit );
         void setLoopPoint        ( int aStartPosition, int aEndPosition, int aStepsPerBar );
         void updateMeasures      ( int aAmount, int aStepsPerBar );
         void setTempo            ( float aTempo, int aTimeSigBeatAmount, int aTimeSigBeatUnit );

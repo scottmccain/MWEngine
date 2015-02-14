@@ -20,33 +20,33 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#ifndef __FM_H_INCLUDED__
-#define __FM_H_INCLUDED__
+#ifndef JAVABRIDGE_API_H_INCLUDED
+#define JAVABRIDGE_API_H_INCLUDED
 
-#include "baseprocessor.h"
-#include "../global.h"
-#include "../lfo.h"
+#include <jni/javabridge.h>
+#include "processingchain.h"
 
-class FrequencyModulator : public BaseProcessor, public LFO
+/**
+ * javabridge_api.h is used to establish a two-way communication (together with javabridge.h)
+ * to allow the AudioEngine to send messages to the Java VM, if you do not need
+ * to send messages TO Java and are using the engine only in a native environment,
+ * simple omit adding this header file in the "native_audio_lib.i"-file which
+ * describes the SWIG-enabled classes for the JNI environment
+ */
+
+/**
+ * these are the same methods as declared in the AudioEngine namespace, but
+ * re-declared so we can call them from Java without having to resort to
+ * go through a lot of trouble declaring the JNIEnv* en jobject arguments
+ * which otherwise wouldn't survive the SWIG wrapping...
+ */
+extern "C"
 {
-    public:
-        FrequencyModulator( int aWaveForm, float aRate );
-        void process( AudioBuffer* sampleBuffer, bool isMonosource );
-
-        // these are here only for SWIG purposes so we can "multiple inherit" from LFO, bit fugly... but hey
-        #ifdef SWIG
-        float getRate();
-        void setRate( float value );
-        int getWave();
-        void setWave( int value );
-        #endif
-
-    private:
-        SAMPLE_TYPE* _buffer; // cached buffer
-        SAMPLE_TYPE modulator;
-        SAMPLE_TYPE carrier;
-        SAMPLE_TYPE fmamp;
-        SAMPLE_TYPE TWO_PI_OVER_SR;
-};
+    void init();
+    void start();
+    void stop();
+    void reset();
+    ProcessingChain* getMasterBusProcessors();
+}
 
 #endif

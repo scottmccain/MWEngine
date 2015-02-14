@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013-2014 Igor Zinken - http://www.igorski.nl
+ * Copyright (c) 2014 Igor Zinken - http://www.igorski.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -20,25 +20,22 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#ifndef __OBSERVER_H_INCLUDED__
-#define __OBSERVER_H_INCLUDED__
+#ifndef __TABLEPOOL_H_INCLUDED__
+#define __TABLEPOOL_H_INCLUDED__
 
-/**
- * The Observer is used to broadcast messages
- * related to engine state changes, it can use the JNI
- * bridge to communicate messages back to the Java environment, but
- * can also be extended for custom behaviour should you choose to
- * keep the entire application within C++
- */
-class Observer
+#include "../wavetable.h"
+#include <map>
+
+namespace TablePool
 {
-    public:
+    // generates a WaveTable for the given waveform type
+    // and store a clone of the table in a private map
+    // each subsequent request for equal waveformTypes for
+    // tables of an equal size are using the stored clone
+    // of the previous generated table
 
-        static void handleBounceComplete( int aIdentifier );
-        static void broadcastStepPosition();
-        static void broadcastTempoUpdate();
-        static void broadcastRecordingUpdate( int aRecordingIdentifier );
-        static void handleHardwareUnavailable();
-};
+    extern void getTable( WaveTable* waveTable, int waveformType );
+    extern std::map<int, WaveTable*> _cachedTables;
+}
 
 #endif

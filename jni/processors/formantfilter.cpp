@@ -22,7 +22,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #include "formantfilter.h"
-#include "../utils.h"
+#include "../utilities/utils.h"
 #include <cmath>
 
 /* constructor / destructor */
@@ -85,7 +85,7 @@ void FormantFilter::setVowel( double aVowel )
         int max      = min < ( 4 /* _coeffs.length - 1 */ ) ? min + 1 : min;
         double delta = std::abs( min - aVowel );
 
-        int l = 11; /* ARRAY_SIZE( _currentCoeffs )*/
+        int l = 11;
 
         for ( int i = 0; i < l; ++i )
         {

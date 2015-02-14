@@ -37,8 +37,6 @@ class SampleEvent : public BaseAudioEvent
         virtual void setBufferRangeStart( int value );
         virtual int getBufferRangeEnd();
         virtual void setBufferRangeEnd( int value );
-        virtual int getBufferRangeLength();
-        virtual void setBufferRangeLength( int value );
         virtual int getReadPointer();
 
         virtual AudioBuffer* synthesize( int aBufferLength );
@@ -48,6 +46,8 @@ class SampleEvent : public BaseAudioEvent
         virtual void removeFromSequencer();
         virtual void swapInstrument( BaseInstrument* aInstrument );
 
+        void mixBuffer( AudioBuffer* outputBuffer, int bufferPos, int minBufferPosition, int maxBufferPosition,
+                        bool loopStarted, int loopOffset, bool useChannelRange );
         bool getBufferForRange( AudioBuffer* buffer, int readPos );
         void playNow(); // enable the event and set it at the current sequencer position (auditioning purposes)
 
